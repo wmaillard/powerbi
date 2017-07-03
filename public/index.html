@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Accessing and Visualing SQL Data</title>
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <style>
+    body {
+        padding-top: 54px;
+    }
+    
+    @media (min-width: 992px) {
+        body {
+            padding-top: 56px;
+        }
+    }
+    /* Temporary navbar container fix */
+    
+    .navbar-toggler {
+        z-index: 1;
+    }
+    
+    @media (max-width: 576px) {
+        nav > .container {
+            width: 100%;
+        }
+    }
+    
+    h5,
+    h6,
+    h7 {
+        padding-bottom: 1%;
+        padding-top: 1%;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar fixed-top navbar-toggleable-md navbar-inverse bg-inverse">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarExample" aria-controls="navbarExample" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="container">
+            <a class="navbar-brand" href="#">Visualizing SQL</a>
+            <div class="collapse navbar-collapse" id="navbarExample">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#summary">Summary<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#accessing">Accessing SQL Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#visualizing">Visualizing Data</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                
+                <h1 class="mt-5">Visualizing and Editing Remote MySQL Data</h1>
+                <p class="lead">Via Web and Native Apps</p>
+                <hr>
+                <section>
+                <h2 id='summary'>Summary</h1>
+                <p>What we need to decide is who is going to need to access this data (read, write, edit), who needs to visualize the data (does everyone need to see PowerBI type reports or are simple charts ok for some?), and how up to date does the data needs to be (PowerBI does not play well with live data, so we would need to use custom solutions if live data is needed or a combination of PowerBI and custom solutions).</p>
+                <p>If we need live data reports and read/write/edits from the client we need to use custom data visualizations (see the bottom of <a href='#visualizing'>Visualizing Data</a>.  If we need to just allow read/write/edits from the client and visualize data that is not live (refreshes about every 3 hours) then we can just rely on Power BI.</p>
+                    <h2 id='#accessing'>Acessing the SQL Database</h2>
+                    <div class="col-lg-12 text-left">
+                        <p>The best way to access the SQL server from a client (phone, webapp, etc) is to run a server on our end (AWS micro would probably be fine) that will spit out a REST API that the clients can connect to. REST APIs let the client send normal web requests (GET, POST, PATCH, DELETE) to view and update, in this case, the SQL database. Requests are made to logical url such as GET to '/users' to get all users. There are several ways to extend our SQL database with a REST API, all of which are relatively simple.
+                            <ul>
+                                <li><a href='https://github.com/jeffknupp/sandman2'>Sandman2</a> is a great product that uses a Python server to create a REST API from virtually all databases (MicrosoftSQL, MySQL, etc). It seems to work well and allows all CRUD actions.
+                                    <br>Tested <i class="fa fa-check" aria-hidden="true"></i>
+                                </li>
+                                <li><a href='https://loopback.io/'>Loopback</a> seems like an awesome tool that does the same as sandman and it is NodeJS based so it will be easier to extend. Loopback can connect to mongodb, mysql, mssql, oracle, and others. It also includes <strong>Built in User Models</strong> with authentication, which will security much faster out of the box then Sandman. Over all this looks like the best tool and it is currently supported by IBM.
+                                    <br>Tested <i class="fa fa-times" aria-hidden="true"></i>
+                                    <li><a href='https://docs.microsoft.com/en-us/rest/api/sql/'>Azure</a> provides an out fo the box REST API if you use their database cloud service. This would mean migrating to Azure (which may have other benefits, like easier data visualization through PowerBI).
+                                        <br>Tested <i class="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                    <h2 id='#visualizing'>Visualizing Data</h2>
+                    <div class="col-lg-12 text-left">
+                        <p>
+                            
+                                <a href='https://powerbi.microsoft.com/en-us/'>Power BI</a> has a lot of out of the box data visualizations that are mostly based on the D3.js library. It also has quite a few limitations.
+                                    <br>
+                                    <br>
+                                    <h5 class="text-center">Getting data into Power BI</h5> With Power BI we can connect to remote (our) and cloud-based (Azure) databases. You must use the Desktop version to connect to our Database, then create reports, then export and upload to the 365 version of PowerBI in order to be able to access reports from our Web/Mobile clients. I have not been able to connect to a remote database yet, but have tried.
+                                    <br> There are several limitations in place that restrict the usefulness of connecting our database to PowerBI:
+                                    <ul>
+                                        <li>Refreshing the database is limited to 8 times a day, or 64 times a day with a <a href='https://powerbi.microsoft.com/en-us/power-bi-premium/'>premium account.</a> This means that live reports through PowerBI are pretty much out. </li>
+                                        <li>Refreshes don't include schema changes, reports need to be recreated if the schema changes</li>
+                                        <li>Viewing reports is free for the first 100 sessions per month then <a href='https://azure.microsoft.com/en-us/pricing/details/power-bi-embedded/'>$5 per 100 sessions after that. </a>
+                                            <blockquote class='blockquote'>A session is a set of interactions between an end user and a Power BI Embedded report. Each time a Power BI Embedded report is displayed to a user, a session is initiated and the subscription holder will be charged for a session. Sessions are billed at a flat rate, independent of the number of visual elements in a report or how frequently the report content is refreshed. A session ends when either the user closes the report, or the session times out after one hour.</blockquote>
+                                            <li>There is this line in the <a href='https://powerbi.microsoft.com/en-us/documentation/powerbi-refresh-data/'>Power BI documentation</a> which seems to indicate that the reports live if the someone is connected locally through PowerBI to the database but I don't think this applies if we are exporting reports to be viewed in a web app
+                                                <blockquote class="blockquote"> If your dataset is configured for a live or DirectQuery connection, datasets are refreshed approximately each hour or when interaction with the data occurs. You can manually adjust the refresh frequency in the Scheduled cache refresh option in the Power BI service.</blockquote>
+                                            </li>
+                                    </ul>
+                                    Tested <i class="fa fa-check" aria-hidden="true"></i> But not completely, need to test the refresh restrictions
+                                    </li>
+                                    <br>
+                                    <br>
+                                    <h5 class="text-center">Getting data out of Power BI</h5> Power BI allows you to use a link to access reports within an iframe. The link can be generated using two methods.
+                                    <br>
+                                    <h6 class='text-center'>Exporting from PowerBI Publish to Web</h6> You can export any report and <a href='https://powerbi.microsoft.com/en-us/documentation/powerbi-service-publish-to-web/'>publish them to the web</a>. This method is insecure and creates a link that can be crawled by anyone. Go to file->publish to web which will give you an embed link which can be used as below.
+                                    <div class="embed-responsive embed-responsive-4by3">
+                                        <iframe class="embed-responsive-item" src="https://app.powerbi.com/view?r=eyJrIjoiZTRhYjY1NmEtYWE5Yi00Nzc5LTljYWYtNDJmYmNjYmU5N2E1IiwidCI6ImM1Y2NhNmExLWVkYzYtNGY1MS05YjQ1LWIzZDkwYTBlZDJiZSIsImMiOjZ9" "></iframe>
+                </div>
+
+    
+                This method is very simple but, again is insecure, and creates frame with the PowerBI wrapper with social links that does not look very professional.  Reports may take an hour to represh in the iframe after they have been saved.
+
+                <h6 class='text-center'>Using the API to generate iframes</h6>
+                <p>Iframe URLs can be genereated dynamically using the following code.  Using this method, we are querying our server for a token which is then used to query the PowerBI for the report. 
+                </p>
+                <pre><code class='card'>//Configure IFrame for the report after you have an Access Token. See Default.aspx.cs to learn how to get an Access Token
+window.onload = function () {
+    if (" " != document.getElementById('MainContent_accessToken').value)
+    {
+        var iframe = document.getElementById('iFrameEmbedReport');
+
+        // To load a Report do the following:
+        // Set the IFrame source to the EmbedUrl from the Get Reports operation
+        iframe.src = document.getElementById('MainContent_ReportEmbedUrl').value;
+
+        // Add an onload handler to submit the access token
+        iframe.onload = postActionLoadReport;
+    }
+};
+
+// Post the access token to the IFrame
+function postActionLoadReport() {
+
+    // Construct the push message structure
+    // this structure also supports setting the reportId, groupId, height, and width.
+    // when using a report in a group, you must provide the groupId on the iFrame SRC
+    var m = {
+        action: "loadReport ",
+        accessToken: document.getElementById('MainContent_accessToken').value
+    };
+    message = JSON.stringify(m);
+
+    // push the message.
+    iframe = document.getElementById('iFrameEmbedReport');
+    iframe.contentWindow.postMessage(message, "* ");;
+}
+</code></pre>
+
+<p><a href='https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-integrate-report-get-report/'>This is how to get an auth token</a></p>
+<p>Not only is this method secure but it allows us to further customize how reports are displayed using the following options</p>
+<pre><code class='card'> export interface IEmbedConfiguration {
+    type?: string;
+    id?: string;
+    uniqueId?: string;
+    embedUrl?: string;
+    tokenType: models.TokenType;
+    accessToken?: string;
+    settings?: models.ISettings;
+    pageName?: string;
+    filters?: models.IFilter[];
+    pageView?: models.PageView;
+    datasetId?: string;
+    permissions?: models.Permissions;
+    viewMode?: models.ViewMode;
+}</code></pre>
+<p>This is the best resource for <a href='https://github.com/Microsoft/PowerBI-JavaScript/wiki'>details on the Power BI API</a></p> 
+
+                </div>
+                <h5>Other Data Visualization Options</h5>
+                <p>PowerBI is pretty intuitive but has its limitations.  It is also embedded in an iframe, which can sometimes be difficult to use, especially on mobile.</p>
+                <p>There are a couple tools that we can use to create custom reports to view data that work better with the web, but do require more customizaion.   These tools, however, can be used in combination with our SQL API to display <strong>Live Data</strong>, which may or may not be necessary.</p>
+                <p><a href ='https://d3js.org/'>D3.js</a> is a beast of a data visualization tool.  It can do everything but it may take longer to create custom reports because of its scope (I'll create a report using it and report how it goes).
+                <p><a href ='http://c3js.org/'>C3.js</a> is a mellowed out version of D3 which makes it easy to generate charts using js.  The charts are less exciting but it is very easy to emplement them.</p>
+
+
+
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js "></script>
+    <script src="vendor/tether/tether.min.js "></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js "></script>
+
+</body>
+
+</html>
