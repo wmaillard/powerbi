@@ -10,6 +10,9 @@
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.11.0/tabulator.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <style>
     body {
@@ -84,7 +87,7 @@
                                 <li><a href='https://github.com/jeffknupp/sandman2'>Sandman2</a> is a great product that uses a Python server to create a REST API from virtually all databases (MicrosoftSQL, MySQL, etc). It seems to work well and allows all CRUD actions.
                                     <br>Tested <i class="fa fa-check" aria-hidden="true"></i>
                                 </li>
-                                <li><a href='https://loopback.io/'>Loopback</a> seems like an awesome tool that does the same as sandman and it is NodeJS based so it will be easier to extend. Loopback can connect to mongodb, mysql, mssql, oracle, and others. It also includes <strong>Built in User Models</strong> with authentication, which will security much faster out of the box then Sandman. Over all this looks like the best tool and it is currently supported by IBM.
+                                <li><a href='https://loopback.io/'>Loopback</a> seems like an awesome tool that does the same as sandman and it is NodeJS based so it will be easier to extend. Loopback can connect to mongodb, mysql, mssql, oracle, and others. It also includes <strong>Built in User Models</strong> with authentication, which will security much faster out of the box then Sandman. Over all this looks like the best tool and it is currently supported by IBM.  It requires a bit more customization than sandman2 but it has a lot of documentation.  We'll need to pull in data models using <a href='https://loopback.io/doc/en/lb2/Discovering-models-from-relational-databases.html'>this</a>.  Here is a <a href='https://stackoverflow.com/questions/26128285/loopback-discoverandbuildmodels-not-generating-models'>Stack Overflow Question</a> that summarizes how to run the script in /server/bin/script.js . On Loopback's documentation, they define <a href='https://loopback.io/doc/en/lb2/model-config.json.html'>how to add the table to the schema after importing</a>.  Models must have an id property! (Use this if you don't have on: ALTER TABLE `users` ADD `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY)
                                     <br>Tested <i class="fa fa-times" aria-hidden="true"></i>
                                     <li><a href='https://docs.microsoft.com/en-us/rest/api/sql/'>Azure</a> provides an out fo the box REST API if you use their database cloud service. This would mean migrating to Azure (which may have other benefits, like easier data visualization through PowerBI).
                                         <br>Tested <i class="fa fa-times" aria-hidden="true"></i>
@@ -114,6 +117,11 @@
                                     <h5 class="text-center">Getting data out of Power BI</h5> Power BI allows you to use a link to access reports within an iframe. The link can be generated using two methods.
                                     <br>
                                     <h6 class='text-center'>Exporting from PowerBI Publish to Web</h6> You can export any report and <a href='https://powerbi.microsoft.com/en-us/documentation/powerbi-service-publish-to-web/'>publish them to the web</a>. This method is insecure and creates a link that can be crawled by anyone. Go to file->publish to web which will give you an embed link which can be used as below.
+
+                                    <div id="example-table"></div>
+
+
+
                                     <div class="embed-responsive embed-responsive-4by3">
                                         <iframe class="embed-responsive-item" src="https://app.powerbi.com/view?r=eyJrIjoiZTRhYjY1NmEtYWE5Yi00Nzc5LTljYWYtNDJmYmNjYmU5N2E1IiwidCI6ImM1Y2NhNmExLWVkYzYtNGY1MS05YjQ1LWIzZDkwYTBlZDJiZSIsImMiOjZ9" "></iframe>
                 </div>
@@ -191,9 +199,22 @@ function postActionLoadReport() {
     </div>
 
     <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js "></script>
+            <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+    <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.11.0/tabulator.min.js"></script>
+
     <script src="vendor/tether/tether.min.js "></script>
     <script src="vendor/bootstrap/js/bootstrap.min.js "></script>
+        <script src="js/index.js"></script>
+
+
 
 </body>
 
